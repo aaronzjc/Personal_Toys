@@ -23,7 +23,7 @@ setting = {
 preference = Preference()
 # judge current time
 sec = datetime.datetime.now().strftime('%H')
-flag = 'dark' if int(sec) <= 17 else 'light'
+flag = 'dark' if 10 <= int(sec) <= 17 else 'light'
 # choose a random theme
 theme = setting[flag][random.randrange(len(setting[flag]))]
 theme.pop('name')
