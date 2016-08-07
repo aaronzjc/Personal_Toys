@@ -1,0 +1,239 @@
+<html>
+    <head>
+        <title>酷炫四子棋</title>
+    </head>
+    <script src="http://code.jquery.com/jquery-2.2.0.min.js" charset="utf-8"></script>
+    <style>
+        .container {
+            border:1px solid #ccc;
+            text-align: center;
+            padding-top:20px;
+        }
+        .content {
+            margin: 0px auto;
+            display: inline-block;
+            width:30%;
+            height: 400px;
+            overflow: hidden;
+        }
+        .extra{
+            display: inline-block;
+            width: 20%;
+            height: 400px;
+            overflow: hidden;
+        }
+        .row {
+            height: auto;
+            max-width: 300px;
+            width: auto;
+        }
+        .col {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            font-size: 10px;
+            text-align: center;
+            line-height: 20px;
+            padding:0px;
+            margin:2px;
+        }
+        .col:hover{
+            cursor: pointer;
+        }
+        .vip {
+            border: 1px solid #E7E682;
+            background: #F5EC7B;
+            height: 20px;
+        }
+        .default {
+            background: #ccc;
+        }
+
+        .blue,p.blue.default {
+            background: #49AADE;
+        }
+        .red,p.red.default {
+            background: #f03;
+        }
+        .yellow,p.yellow.default {
+            background: #D7D24F;
+        }
+        p.default {
+            display: inline-block;
+            width: auto;
+            height: 20px;
+            line-height: 20px;
+            font-size: 14px;
+            color:#fff;
+            background: #666;
+            padding:2px;
+        }
+    </style>
+    <body>
+        <div class="container">
+            <div class="content">
+                <{foreach from=$map key="k" item="row"}>
+                    <div class="row">
+                    <{foreach from=$row key="j" item="col"}>
+                        <div id="p_<{$k}>_<{$j}>" onclick="setKey(<{$k}>, <{$j}>, this)" class="col default"></div>
+                    <{/foreach}>
+                    </div>
+                <{/foreach}>
+            </div>
+            <div class="extra">
+                <p>当前棋手</p>
+                <p id="current" class="default <{$players['first']['key']}>"></p>
+                <hr />
+                <p>玩家</p>
+                <p>姓名: <{$players['first']['name']}></p>
+                <p>姓名: <{$players['second']['name']}></p>
+                <hr />
+                <button onclick="reset()">重置</button><button onclick="back()">悔棋</button><button class="vip" onclick="win()">土豪按钮</button>
+            </div>
+        </div>
+        <script>
+            // 玩家定义
+            var players = <{$playerJson}>;
+            // 备忘录，存储下的步骤
+            var store = {first:[], second:[]};
+            // 当前棋手
+            var current = 'first';
+            // 几个子算赢
+            var victory = <{$victory}>;
+            // 游戏状态
+            var win = false;
+
+            $(function(){
+                // 初始化
+                $('#current').html(players[current]['name']);
+            });
+            // 重置棋盘
+            function reset() {
+                $('div.col').attr('class', 'col default');
+                current = 'first';
+                win = false;
+                store = {first:[], second:[]};
+            }
+            // 悔棋
+            function back() {
+                if (store['first'].length == 0 && store['second'].length == 0) {
+                    alert('还没下呢，不能悔棋');
+                    return false;
+                }
+                switchPlayer();
+                var item = store[current].pop();
+                var id = 'p_' + item[0] + '_' + item[1];
+                $('#'+id).attr('class', 'col default');
+            }
+            // 土豪按钮
+            function win() {
+                alert('恭喜聪明绝顶的'+players[current]['name']+'取得胜利！赢的毫无压力~');
+            }
+            // 切换选手
+            function switchPlayer() {
+                current = current == 'first'?'second':'first';
+                $('#current').html(players[current]['name']);
+                $('#current').attr('class', 'default ' + players[current]['key']);
+            }
+            // 放置棋子
+            function setKey(k,j, obj) {
+                // 如果状态是赢了，也不能下棋了
+                if (win) {
+                    return false;
+                }
+                // 已经下了棋子的地方不能再下
+                if ($(obj).attr('class') != 'col default') {
+                    return false;
+                }
+                var id = 'p_' + k + '_' + j;
+                // 棋盘下棋
+                $('#'+id).attr('class', 'col ' + players[current]['key']);
+
+                // 判断是否胜利
+                judgeWin(current, [k,j]);
+                // 保存至步骤备忘录
+                store[current].push([k,j]);
+
+                // 切换下一个的人
+                switchPlayer();
+            }
+            // 判断输赢
+            function judgeWin(player, loca) {
+                var start = loca;
+                var map = {
+                    'NS':[],
+                    'WE':[],
+                    'NW':[],
+                    'NE':[]
+                };
+                // 判断4个方向，整理数据存入数组
+                $.each(store[player], function(i,item){
+                    var x = item[0] - loca[0];
+                    var y = item[1] - loca[1];
+                    console.log(x,y);
+                    if (item[0] == loca[0]) {
+                        // 如果y坐标相同，则存入
+                        map['WE'].push(item);
+                    } else if (item[1] == loca[1]) {
+                        map['NS'].push(item);
+                    } else if (x == y) {
+                        map['NW'].push(item);
+                    } else if (x != y && Math.abs(x) == Math.abs(y)) {
+                        map['NE'].push(item);
+                    }
+                });
+                // 进行胜利判断
+                for (x in map) {
+                    map[x].push(loca)
+                    if (map[x].length > 0) {
+                        // 首先排序元素
+                        map[x].sort(function(a,b) {
+                            return a[0] - b[0];
+                        });
+                        var cnt = 1;
+                        var base = map[x][0];
+                        for (var i=1; i<map[x].length;i++) {
+                            if (x == 'NS') {
+                                if (map[x][i][0] - base[0] == 1) {
+                                    cnt++;
+                                } else {
+                                    cnt = 0;
+                                }
+                                base = map[x][i];
+                            } else if (x == 'WE') {
+                                if (map[x][i][1] - base[1] == 1) {
+                                    cnt++;
+                                } else {
+                                    cnt = 0;
+                                }
+                                base = map[x][i];
+                            } else if (x == 'NW') {
+                                if (map[x][i][0] - base[0] == 1 && map[x][i][1] - base[1] == 1) {
+                                    cnt++;
+                                } else {
+                                    cnt = 0;
+                                }
+                                base = map[x][i];
+                            } else if (x == 'NE') {
+                                if (map[x][i][0] - base[0] == 1 && map[x][i][1] - base[1] == -1) {
+                                    cnt++;
+                                } else {
+                                    cnt = 0;
+                                }
+                                base = map[x][i];
+                            }
+                            console.log('cnt: ' + cnt);
+                            if (cnt >= victory) {
+                                console.log('fucj');
+                                alert(players[current]['name'] + '取得胜利!');
+                                win = true;
+                            }
+                        }
+                    }
+                }
+                console.log(map);
+            }
+        </script>
+    </body>
+</html>
