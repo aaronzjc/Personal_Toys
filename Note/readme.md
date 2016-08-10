@@ -11,16 +11,16 @@
 ### look
 登录
 
-![login](https://github.com/ButBueatiful/dotvim/raw/master/screenshots/vim-screenshot.jpg)
+![login](https://github.com/aaronzjc/Personal_Toys/blob/master/Note/img/login.png)
 
 添加
 
-![edit](https://github.com/ButBueatiful/dotvim/raw/master/screenshots/vim-screenshot.jpg)
+![edit](https://github.com/aaronzjc/Personal_Toys/blob/master/Note/img/edit.png)
 
 列表
 
-![list](https://github.com/ButBueatiful/dotvim/raw/master/screenshots/vim-screenshot.jpg)
+![list](https://github.com/aaronzjc/Personal_Toys/blob/master/Note/img/list.png)
 
 检索
 
-![search](https://github.com/ButBueatiful/dotvim/raw/master/screenshots/vim-screenshot.jpg)
+![search](https://github.com/aaronzjc/Personal_Toys/blob/master/Note/img/search.png)
