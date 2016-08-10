@@ -9,18 +9,6 @@
 后来，学习vue时，用vue重写了这个WebAPP。也算是入门vue了。
 
 ### look
-登录
+预览
 
-![login](https://github.com/aaronzjc/Personal_Toys/blob/master/Note/img/login.png)
-
-添加
-
-![edit](https://github.com/aaronzjc/Personal_Toys/blob/master/Note/img/main.png)
-
-列表
-
-![list](https://github.com/aaronzjc/Personal_Toys/blob/master/Note/img/list.png)
-
-检索
-
-![search](https://github.com/aaronzjc/Personal_Toys/blob/master/Note/img/search.png)
+![login](https://github.com/aaronzjc/Personal_Toys/blob/master/Note/img/app.png)
