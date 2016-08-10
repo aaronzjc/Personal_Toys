@@ -11,8 +11,8 @@
 ### look
 设置
 
-![setting](https://github.com/ButBueatiful/dotvim/raw/master/screenshots/vim-screenshot.jpg)
+![setting](https://github.com/aaronzjc/Personal_Toys/blob/master/N%20cheese/img/setting.png)
 
 玩
 
-![play](https://github.com/ButBueatiful/dotvim/raw/master/screenshots/vim-screenshot.jpg)
+![play](https://github.com/aaronzjc/Personal_Toys/blob/master/N%20cheese/img/play.png)
