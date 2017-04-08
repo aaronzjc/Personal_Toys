@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script type="text/javascript" src="../lib/vue.js"></script>
+    <title>VLoadMore</title>
+    <style>
+        #list {
+        width: 240px;
+        height: 350px;
+        margin: 40px auto;
+        border: 1px solid #dadada;
+        background: #fff;
+        /*  滚动  */
+        overflow-y: scroll;
+        }
+
+        .item {
+        height: 100px;
+        text-align: center;
+        line-height: 100px;
+        border-bottom: 1px dashed #dadada;
+        }
+    </style>
+</head>
+<body>
+    <template id="v-load-more">
+        <div v-show="loading" style="width:100%;height:40px;line-height:40px;text-align:center;">正在加载...</div>
+    </template>
+    <div id="app">
+        <div id="list">
+            <div class="item" v-for="num in list">{{ num }}</div>
+            <v-load-more :scroller="scroller" :loading="loading" @load="loadData"></v-load-more>
+        </div>
+    </div>
+    <script>
+        Vue.config.debug = true;
+        Vue.config.devtools = true;
+
+        var VLoadMore = Vue.extend({
+            template: "#v-load-more",
+            props: ["scroller","loading"],
+            created: function() {
+                if (this.scroller == undefined) return;
+                this.scroller.addEventListener('scroll', this.handleScroll);
+            },
+            methods: {
+                handleScroll: function() {
+                    if (this.scroller == window) {
+                        var docHeight = document.body.scrollHeight;
+                        var containerHeight = window.innerHeight;
+                        var scrollHeight = window.scrollY;
+                    } else {
+                        var docHeight = this.scroller.scrollHeight;
+                        var containerHeight = this.scroller.offsetHeight;
+                        var scrollHeight = this.scroller.scrollTop;
+                    }
+
+                    if (docHeight <= containerHeight + scrollHeight) {
+                        this.$emit("load");
+                    }
+                }
+            }
+        })
+        var vm = new Vue({
+            el: "#app",
+            data: {
+                list: [1,2,3,4,5,6],
+
+                scroller: undefined,
+                loading: false
+            },
+            created: function() {
+                this.scroller = document.getElementById('list');
+            },
+            methods: {
+                loadData: function() {
+                    this.loading = true;
+                    setTimeout(function(){
+                        this.list.push(Math.random(1,10));
+                        
+                    }.bind(this), 1000);
+                }
+            },
+            components: {
+                'v-load-more': VLoadMore
+            }
+        });
+    </script>
+</body>
+</html>
